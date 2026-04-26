@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>My Profile</title>
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            transform: rotate(30deg);
+        }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            border: 3px solid rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+        }
+        .glass-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.3s;
+            margin-bottom: 25px;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        .nav-pills .nav-link {
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #4f46e5;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Profile Header -->
+        <div class="profile-header text-center z-1">
+            <div class="d-flex flex-column align-items-center position-relative z-2">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 class="fw-bold mb-1" th:text="${profile != null ? profile.fullName : user.username}">Name</h2>
+                <p class="mb-0 opacity-75 fw-medium" th:text="${profile != null ? profile.jobTitle : user.role}">Role</p>
+                <div class="mt-3 d-flex gap-3 justify-content-center">
+                   <span class="badge bg-light text-primary py-2 px-3 rounded-pill"><i class="fas fa-envelope me-1"></i> <span th:text="${user.email}">Email</span></span>
+                   <span class="badge bg-light text-primary py-2 px-3 rounded-pill" th:if="${profile != null}"><i class="fas fa-building me-1"></i> <span th:text="${profile.department.deptName}">Department</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Personal Information -->
+                <div class="glass-card card h-100 p-4">
+                    <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">Personal Details</h5>
+                    <div th:if="${profile == null}" class="text-muted">
+                        Profile details not configured. Please contact HR.
+                    </div>
+                    <div th:if="${profile != null}" class="d-flex flex-column gap-3">
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold lh-1">NIC</small>
+                            <div class="fw-medium text-dark" th:text="${profile.nic}">NIC</div>
+                        </div>
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold lh-1">Phone</small>
+                            <div class="fw-medium text-dark" th:text="${profile.phone}">Phone</div>
+                        </div>
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold lh-1">Address</small>
+                            <div class="fw-medium text-dark" th:text="${profile.address}">Address</div>
+                        </div>
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold lh-1">Employment Type</small>
+                            <div class="fw-medium text-dark" th:text="${profile.employmentType}">Type</div>
+                        </div>
+                        <div>
+                            <small class="text-muted text-uppercase fw-bold lh-1">Date Joined</small>
+                            <div class="fw-medium text-dark" th:text="${profile.dateJoined}">Date</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <!-- Tabs for Leave and Tickets -->
+                <div class="glass-card card p-4">
+                    <ul class="nav nav-pills mb-4" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="leaves-tab" data-bs-toggle="pill" data-bs-target="#leaves" type="button" role="tab"><i class="fas fa-calendar-alt me-2"></i>Leaves Request</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tickets-tab" data-bs-toggle="pill" data-bs-target="#tickets" type="button" role="tab"><i class="fas fa-ticket-alt me-2"></i>Support Tickets</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="profileTabsContent">
+                        <!-- Leaves Tab -->
+                        <div class="tab-pane fade show active" id="leaves" role="tabpanel">
+                            <!-- Leave Request Form -->
+                            <div class="border rounded-4 p-3 mb-4 bg-light">
+                                <h6 class="fw-bold mb-3"><i class="fas fa-plus-circle text-primary me-2"></i>Submit Leave Request</h6>
+                                <form th:action="@{/leave/save}" th:object="${leaveRequest}" method="post">
+                                    <input type="hidden" name="source" value="profile" />
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Leave Type</label>
+                                            <select th:field="*{leaveType}" class="form-select form-select-sm" required>
+                                                <option value="" disabled selected>Select</option>
+                                                <option th:each="type : ${leaveTypes}" th:value="${type}" th:text="${type}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">Start Date</label>
+                                            <input type="date" th:field="*{startDate}" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold">End Date</label>
+                                            <input type="date" th:field="*{endDate}" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Reason</label>
+                                            <textarea th:field="*{reason}" class="form-control form-control-sm" rows="2" required></textarea>
+                                        </div>
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-primary px-4 rounded-pill">Submit Request</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Leaves History -->
+                            <h6 class="fw-bold mb-3">Leave History</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle datatable w-100">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Period</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="leave : ${leaves}">
+                                            <td class="fw-medium" th:text="${leave.leaveType}">Annual</td>
+                                            <td>
+                                                <small class="text-muted d-block"><i class="fas fa-calendar me-1"></i> <span th:text="${leave.startDate}"></span> to <span th:text="${leave.endDate}"></span></small>
+                                            </td>
+                                            <td>
+                                                <span class="badge rounded-pill" th:classappend="${leave.status.name() == 'APPROVED' ? 'bg-success' : (leave.status.name() == 'PENDING' ? 'bg-warning text-dark' : 'bg-danger')}" th:text="${leave.status}">Pending</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tickets Tab -->
+                        <div class="tab-pane fade" id="tickets" role="tabpanel">
+                            <!-- Ticket Form -->
+                            <div class="border rounded-4 p-3 mb-4 bg-light">
+                                <h6 class="fw-bold mb-3"><i class="fas fa-plus-circle text-primary me-2"></i>Raise New Ticket</h6>
+                                <form th:action="@{/tickets/save}" th:object="${ticket}" method="post">
+                                    <input type="hidden" name="source" value="profile" />
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Subject</label>
+                                            <input type="text" th:field="*{subject}" class="form-control form-control-sm" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Category</label>
+                                            <select th:field="*{category}" class="form-select form-select-sm" required>
+                                                <option value="" disabled selected>Select</option>
+                                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Description</label>
+                                            <textarea th:field="*{description}" class="form-control form-control-sm" rows="2" required></textarea>
+                                        </div>
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-primary px-4 rounded-pill">Submit Ticket</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Tickets History -->
+                            <h6 class="fw-bold mb-3">Ticket History</h6>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle datatable w-100">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Ticket Info</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="t : ${tickets}">
+                                            <td>
+                                                <div class="fw-bold mb-1" th:text="${t.subject}">Subject</div>
+                                                <small class="text-muted"><span class="badge bg-secondary opacity-75" th:text="${t.category}">IT</span> - Created: <span th:text="${#temporals.format(t.createdAt, 'MMM dd, yyyy HH:mm')}">Date</span></small>
+                                            </td>
+                                            <td>
+                                                <span class="badge rounded-pill" 
+                                                    th:classappend="${t.status.name() == 'RESOLVED' ? 'bg-success' : (t.status.name() == 'OPEN' ? 'bg-primary' : 'bg-warning text-dark')}" 
+                                                    th:text="${t.status}">Open</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>HR Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-indigo" style="background-color: #6366f1;">
+                    <div class="stat-icon"><i class="fas fa-users text-white"></i></div>
+                    <h3 th:text="${totalStaff}">0</h3>
+                    <p class="mb-0">Total Staff</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-orange" style="background-color: #f59e0b;">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt text-white"></i></div>
+                    <h3 th:text="${pendingLeaves}">0</h3>
+                    <p class="mb-0">Pending Leave Requests</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-teal" style="background-color: #14b8a6;">
+                    <div class="stat-icon"><i class="fas fa-money-check-alt text-white"></i></div>
+                    <h3 th:text="${payrollGenerated ? 'YES' : 'NO'}" th:classappend="${payrollGenerated ? '' : 'text-danger'}">NO</h3>
+                    <p class="mb-0">Payroll for this Month</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Pending Leave Approvals</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Staff Name</th>
+                                        <th>Leave Type</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${leaves == null or leaves.empty}">
+                                        <td colspan="5" class="text-center text-muted">No pending leave requests.</td>
+                                    </tr>
+                                    <tr th:each="leave : ${leaves}">
+                                        <td th:text="${leave.user.username}">Bob</td>
+                                        <td th:text="${leave.leaveType}">Annual</td>
+                                        <td th:text="${leave.startDate}">Date</td>
+                                        <td th:text="${leave.endDate}">Date</td>
+                                        <td>
+                                            <a th:href="@{/hr/leave/review/{id}(id=${leave.leaveId})}" class="btn btn-sm btn-primary">Review</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

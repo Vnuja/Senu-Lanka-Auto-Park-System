@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>My Evaluations</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">Performance Evaluation History</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Rating</th>
+                                <th>Evaluated By</th>
+                                <th>Comments</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ev : ${evals}">
+                                <td th:text="${ev.period}">Q1 2023</td>
+                                <td>
+                                    <span class="text-warning" th:each="i : ${#numbers.sequence(1, ev.rating)}"><i class="fas fa-star"></i></span>
+                                    <span class="text-muted" th:if="${ev.rating < 5}" th:each="i : ${#numbers.sequence(ev.rating + 1, 5)}"><i class="far fa-star"></i></span>
+                                </td>
+                                <td th:text="${ev.evaluatedBy.username}">Manager</td>
+                                <td th:text="${ev.comments}">Great job.</td>
+                                <td th:text="${#temporals.format(ev.createdAt, 'yyyy-MM-dd')}">2023-01-01</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Payroll Management</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span th:text="'Payroll for ' + ${month} + '/' + ${year}">Payroll</span>
+                <a th:href="@{/payroll/generate}" class="btn btn-sm btn-primary">Generate Payroll</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Staff Member</th>
+                                <th>Basic Salary</th>
+                                <th>Allowances</th>
+                                <th>Deductions</th>
+                                <th>Net Salary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${payrolls}">
+                                <td th:text="${p.user.username}">Bob</td>
+                                <td th:text="${p.basicSalary}">5000</td>
+                                <td th:text="${p.allowances}">500</td>
+                                <td th:text="${p.deductions}">200</td>
+                                <td class="fw-bold" th:text="${p.netSalary}">5300</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-print"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

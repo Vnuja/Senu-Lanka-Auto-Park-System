@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Support Tickets</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm text-dark">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Support Tickets</span>
+                <a th:href="@{/tickets/new}" class="btn btn-sm btn-primary">Raise New Ticket</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="t : ${tickets}">
+                                <td th:text="${t.subject}">Issue</td>
+                                <td th:text="${t.category}">IT</td>
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${t.status.name() == 'RESOLVED' ? 'bg-success' : (t.status.name() == 'OPEN' ? 'bg-primary' : 'bg-warning')}" 
+                                          th:text="${t.status}">Open</span>
+                                </td>
+                                <td th:text="${#temporals.format(t.createdAt, 'yyyy-MM-dd HH:mm')}">Time</td>
+                                <td>
+                                    <div class="dropdown" sec:authorize="hasRole('IT_SUPPORT')">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Status
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
+                                                    <input type="hidden" name="status" value="IN_PROGRESS">
+                                                    <button type="submit" class="dropdown-item">In Progress</button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
+                                                    <input type="hidden" name="status" value="RESOLVED">
+                                                    <button type="submit" class="dropdown-item">Resolved</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <span sec:authorize="!hasRole('IT_SUPPORT')" class="text-muted small">View Only</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

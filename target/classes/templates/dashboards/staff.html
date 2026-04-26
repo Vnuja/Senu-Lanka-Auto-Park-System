@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>My Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">Attendance Quick Action</div>
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <h5 th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Date</h5>
+                            <h2 class="display-4 font-monospace" id="clock">00:00:00</h2>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <form th:action="@{/attendance/check-in}" method="post" th:if="${todayAttendance == null or todayAttendance.checkIn == null}">
+                                <button type="submit" class="btn btn-success btn-lg w-100 py-3">
+                                    <i class="fas fa-sign-in-alt me-2"></i> CHECK IN
+                                </button>
+                            </form>
+                            <form th:action="@{/attendance/check-out}" method="post" th:if="${todayAttendance != null and todayAttendance.checkIn != null and todayAttendance.checkOut == null}">
+                                <button type="submit" class="btn btn-danger btn-lg w-100 py-3">
+                                    <i class="fas fa-sign-out-alt me-2"></i> CHECK OUT
+                                </button>
+                            </form>
+                            <div th:if="${todayAttendance != null and todayAttendance.checkOut != null}" class="alert alert-info">
+                                You have completed your shift for today.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">Leave Balance & Stats</div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-4">
+                                <h6 class="text-muted">My Requests</h6>
+                                <h2 th:text="${myLeaves}">0</h2>
+                            </div>
+                            <div class="col-6 mb-4">
+                                <h6 class="text-muted">Open Tickets</h6>
+                                <h2 th:text="${myTickets}">0</h2>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <a href="/leave/new" class="btn btn-outline-primary mb-2">Request Leave</a>
+                            <a href="/tickets/new" class="btn btn-outline-secondary">Raise Ticket</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">My Recent Attendance</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${recentAttendance == null or recentAttendance.empty}">
+                                        <td colspan="4" class="text-center text-muted">No records found.</td>
+                                    </tr>
+                                    <tr th:each="att : ${recentAttendance}">
+                                        <td th:text="${att.date}">Date</td>
+                                        <td th:text="${att.checkIn}">In</td>
+                                        <td th:text="${att.checkOut}">Out</td>
+                                        <td>
+                                            <span class="badge" th:classappend="${att.status.name() == 'PRESENT' ? 'bg-success' : 'bg-danger'}" th:text="${att.status}">Present</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function updateClock() {
+                const now = new Date();
+                const clock = document.getElementById('clock');
+                if (clock) {
+                    clock.innerText = now.toLocaleTimeString();
+                }
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+        </script>
+    </div>
+</body>
+</html>

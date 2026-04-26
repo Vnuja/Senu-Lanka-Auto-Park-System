@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Evaluate Staff</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">Performance Evaluation</div>
+                    <div class="card-body">
+                        <form th:action="@{/performance/save}" th:object="${performance}" method="post">
+                            <input type="hidden" name="targetUserId" th:value="${targetUserId}">
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Review Period</label>
+                                <input type="text" th:field="*{period}" class="form-control" placeholder="e.g. Q1 2024, Annual 2023" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Rating (1-5)</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check" th:each="r : ${#numbers.sequence(1,5)}">
+                                        <input class="form-check-input" type="radio" th:field="*{rating}" th:value="${r}" th:id="'rating'+${r}" required>
+                                        <label class="form-check-label" th:for="'rating'+${r}" th:text="${r}"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Comments & Feedback</label>
+                                <textarea th:field="*{comments}" class="form-control" rows="4" placeholder="Detail the staff's performance, strengths, and areas for improvement..." required></textarea>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="button" onclick="history.back()" class="btn btn-outline-secondary">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit Evaluation</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

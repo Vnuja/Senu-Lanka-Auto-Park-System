@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>IT Support Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="stat-icon"><i class="fas fa-ticket-alt text-white"></i></div>
+                    <h3 th:text="${openTickets ?: '0'}">0</h3>
+                    <p class="mb-0">Open IT Tickets</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-info text-white">
+                    <div class="stat-icon"><i class="fas fa-spinner text-white"></i></div>
+                    <h3 th:text="${inProgressTickets ?: '0'}">0</h3>
+                    <p class="mb-0">In Progress</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-danger text-white">
+                    <div class="stat-icon"><i class="fas fa-exclamation-circle text-white"></i></div>
+                    <h3 th:text="${escalatedTickets ?: '0'}">0</h3>
+                    <p class="mb-0">Escalated</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">Unassigned IT Tickets</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table datatable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Subject</th>
+                                <th>Raised By</th>
+                                <th>Created At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" class="text-center text-muted">No unassigned tickets.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

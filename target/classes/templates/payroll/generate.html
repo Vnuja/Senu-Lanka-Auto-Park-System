@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Generate Payroll</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">Calculate & Generate Payroll</div>
+            <div class="card-body">
+                <form th:action="@{/payroll/generate}" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Select Staff Member</label>
+                            <select name="staffId" class="form-select" required>
+                                <option th:each="s : ${staffList}" th:value="${s.profileId}" th:text="${s.fullName + ' (' + s.jobTitle + ')'}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Month</label>
+                            <input type="number" name="month" class="form-control" min="1" max="12" th:value="${T(java.time.LocalDate).now().getMonthValue()}" required>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Year</label>
+                            <input type="number" name="year" class="form-control" th:value="${T(java.time.LocalDate).now().getYear()}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Bonus / Allowances</label>
+                            <input type="number" step="0.01" name="allowances" class="form-control" value="0.00">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Deductions (Tax, EPF, etc)</label>
+                            <input type="number" step="0.01" name="deductions" class="form-control" value="0.00">
+                        </div>
+                    </div>
+                    <div class="alert alert-info py-2">
+                        <i class="fas fa-info-circle me-1"></i> Net Salary will be auto-calculated as (Basic + Allowances - Deductions).
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <a th:href="@{/payroll}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success px-4">Generate & Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

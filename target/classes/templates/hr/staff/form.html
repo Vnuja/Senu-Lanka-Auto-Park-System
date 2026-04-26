@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title th:text="${title}">Staff Form</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white" th:text="${title}">Staff Details</div>
+            <div class="card-body">
+                <form th:action="@{/hr/staff/save}" th:object="${profile}" method="post">
+                    <input type="hidden" th:field="*{profileId}">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Linked User Account</label>
+                            <select th:field="*{user.userId}" class="form-select" required>
+                                <option value="">-- Select User --</option>
+                                <option th:each="u : ${users}" th:value="${u.userId}" th:text="${u.username}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" th:field="*{fullName}" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">NIC Number</label>
+                            <input type="text" th:field="*{nic}" class="form-control" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" th:field="*{phone}" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Base Salary</label>
+                            <input type="number" step="0.01" th:field="*{salaryBase}" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea th:field="*{address}" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Department</label>
+                            <select th:field="*{department.deptId}" class="form-select">
+                                <option value="">-- Select --</option>
+                                <option th:each="d : ${departments}" th:value="${d.deptId}" th:text="${d.deptName}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Job Title</label>
+                            <input type="text" th:field="*{jobTitle}" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Employment Type</label>
+                            <select th:field="*{employmentType}" class="form-select">
+                                <option th:each="t : ${empTypes}" th:value="${t}" th:text="${t}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Date Joined</label>
+                        <input type="date" th:field="*{dateJoined}" class="form-control">
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a th:href="@{/hr/staff}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Save Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

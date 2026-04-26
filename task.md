@@ -1,0 +1,36 @@
+# Tasks
+
+- [x] Project Setup & Initial Configuration
+    - [x] Create `pom.xml`
+    - [x] Create `application.properties`
+    - [x] Create directory structure
+- [x] Database Schema & Entities
+    - [x] Create `schema.sql`
+    - [x] Implement JPA Entities
+    - [x] Implement Repositories
+- [x] Authentication & User Management
+    - [x] Implement Security Configuration
+    - [x] Implement Custom User Service
+    - [x] Implement Login/Logout functionality
+    - [x] Implement User CRUD for Admin
+- [x] Core Modules Implementation
+    - [x] Staff Profile Management
+    - [x] Attendance Management
+    - [x] Leave Management
+    - [x] Payroll Management
+    - [x] Performance Management
+    - [x] Ticket / Support Management
+- [x] Presentation Layer (UI/UX)
+    - [x] Create Layout and Sidebar
+    - [x] Implement Dashboards for all roles
+    - [x] Implement Module-specific views
+- [x] Reporting & Analytics
+    - [x] Implement Attendance Trend Report
+    - [x] Implement Leave Summary Report
+    - [x] Implement Payroll Cost Report
+- [x] System Configuration & Logs
+    - [x] Implement System Settings
+    - [x] Implement Activity Logging
+- [x] Seed Data & Final Verification
+    - [x] Implement Data Seeder
+    - [x] Final Build and Test

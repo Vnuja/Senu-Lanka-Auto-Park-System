@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Department Manager Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card stat-card bg-info text-white">
+                    <div class="stat-icon"><i class="fas fa-users-cog text-white"></i></div>
+                    <h3 th:text="${teamSize ?: '0'}">0</h3>
+                    <p class="mb-0">Team Size</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card stat-card bg-warning text-white">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt text-white"></i></div>
+                    <h3 th:text="${pendingLeaves ?: '0'}">0</h3>
+                    <p class="mb-0">Pending Team Leaves</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Team Attendance (Today)</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Check In</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="3" class="text-center text-muted">Select department to view team status.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Pending Performance Evaluations</div>
+                    <div class="card-body">
+                        <p class="text-muted small">No evaluations due for this period.</p>
+                        <a href="/manager/performance" class="btn btn-sm btn-outline-primary">Evaluation History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>My Leave Requests</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <span>My Leave History</span>
+                <a th:href="@{/leave/new}" class="btn btn-sm btn-primary">Submit New Request</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="leave : ${leaves}">
+                                <td th:text="${leave.leaveType}">Annual</td>
+                                <td th:text="${leave.startDate}">2023-01-01</td>
+                                <td th:text="${leave.endDate}">2023-01-05</td>
+                                <td>
+                                    <span class="badge" th:classappend="${leave.status.name() == 'APPROVED' ? 'bg-success' : (leave.status.name() == 'PENDING' ? 'bg-warning' : 'bg-danger')}" th:text="${leave.status}">Pending</span>
+                                </td>
+                                <td th:text="${leave.reason}">Vacation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

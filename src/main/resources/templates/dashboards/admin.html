@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card stat-card text-white bg-primary">
+                    <div class="stat-icon"><i class="fas fa-users text-white"></i></div>
+                    <h3 th:text="${totalUsers}">0</h3>
+                    <p class="mb-0">Total Users</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card text-white bg-danger">
+                    <div class="stat-icon"><i class="fas fa-ticket-alt text-white"></i></div>
+                    <h3 th:text="${activeTickets}">0</h3>
+                    <p class="mb-0">Active Tickets</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card text-white bg-warning">
+                    <div class="stat-icon"><i class="fas fa-calendar-check text-white"></i></div>
+                    <h3 th:text="${pendingLeaves}">0</h3>
+                    <p class="mb-0">Pending Leaves</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card text-white bg-success">
+                    <div class="stat-icon"><i class="fas fa-check-circle text-white"></i></div>
+                    <h3 th:text="${systemHealth ?: 'HEALTHY'}">HEALTHY</h3>
+                    <p class="mb-0">System Status</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Recent System Activity</span>
+                        <a href="/admin/logs" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Entity</th>
+                                        <th>User</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${recentLogs == null or recentLogs.empty}">
+                                        <td colspan="4" class="text-center text-muted">No recent logs found.</td>
+                                    </tr>
+                                    <tr th:each="log : ${recentLogs}">
+                                        <td th:text="${log.action}">Logged In</td>
+                                        <td th:text="${log.entity}">User</td>
+                                        <td th:text="${log.user != null ? log.user.username : 'System'}">admin</td>
+                                        <td th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm')}">Time</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">System Quick Links</div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <a href="/admin/users" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Manage Users <i class="fas fa-chevron-right text-muted small"></i>
+                            </a>
+                            <a href="/hr/staff" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                Staff Directory <i class="fas fa-chevron-right text-muted small"></i>
+                            </a>
+                            <a href="/admin/config" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                System Configuration <i class="fas fa-chevron-right text-muted small"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
