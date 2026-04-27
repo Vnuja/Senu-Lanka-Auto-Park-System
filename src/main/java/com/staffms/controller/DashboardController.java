@@ -32,7 +32,7 @@ public class DashboardController {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    @GetMapping("/admin/dashboard")
+    @GetMapping("/admin/profile")
     public String adminDashboard(Model model) {
         model.addAttribute("title", "Admin Dashboard");
         model.addAttribute("totalUsers", userService.getAllUsers().size());
@@ -42,7 +42,7 @@ public class DashboardController {
         return "dashboards/admin";
     }
 
-    @GetMapping("/hr/dashboard")
+    @GetMapping("/hr/profile")
     public String hrDashboard(Model model) {
         model.addAttribute("title", "HR Dashboard");
         model.addAttribute("pendingLeaves", leaveService.getPendingLeaves().size());
@@ -52,32 +52,33 @@ public class DashboardController {
         return "dashboards/hr";
     }
 
-    @GetMapping("/staff/dashboard")
+    @GetMapping("/staff/profile")
     public String staffDashboard(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.getUser();
         model.addAttribute("title", "My Dashboard");
         model.addAttribute("myTickets", ticketService.getTicketsByUser(user).size());
         model.addAttribute("myLeaves", leaveService.getLeavesByUser(user).size());
-        model.addAttribute("todayAttendance", attendanceRepository.findByUserAndDate(user, LocalDate.now()).orElse(null));
+        model.addAttribute("todayAttendance",
+                attendanceRepository.findByUserAndDate(user, LocalDate.now()).orElse(null));
         model.addAttribute("recentAttendance", attendanceService.getAttendanceByUser(user).stream().limit(5).toList());
         return "dashboards/staff";
     }
 
-    @GetMapping("/manager/dashboard")
+    @GetMapping("/manager/profile")
     public String managerDashboard(Model model) {
         model.addAttribute("title", "Manager Dashboard");
         model.addAttribute("pendingLeaves", leaveService.getPendingLeaves().size());
         return "dashboards/manager";
     }
 
-    @GetMapping("/it/dashboard")
+    @GetMapping("/it/profile")
     public String itDashboard(Model model) {
         model.addAttribute("title", "IT Support Dashboard");
         model.addAttribute("openTickets", ticketService.getAllOpenTickets().size());
         return "dashboards/it";
     }
-    
-    @GetMapping("/analytics/dashboard")
+
+    @GetMapping("/analytics/profile")
     public String analyticsDashboard(Model model) {
         model.addAttribute("title", "Analytics Dashboard");
         return "dashboards/analytics";

@@ -38,14 +38,14 @@ public class PerformanceController {
 
     @PostMapping("/save")
     public String saveEvaluation(@ModelAttribute Performance performance,
-                                 @RequestParam Long targetUserId,
-                                 @AuthenticationPrincipal CustomUserDetails userDetails,
-                                 RedirectAttributes ra) {
+            @RequestParam Long targetUserId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes ra) {
         performance.setEvaluatedBy(userDetails.getUser());
         // For simplicity, setting the user object directly. In real app, fetch from DB.
         performance.setUser(staffService.getStaffByUserId(targetUserId).get().getUser());
         performanceService.submitEvaluation(performance);
         ra.addFlashAttribute("successMsg", "Evaluation submitted successfully!");
-        return "redirect:/manager/dashboard";
+        return "redirect:/manager/profile";
     }
 }
