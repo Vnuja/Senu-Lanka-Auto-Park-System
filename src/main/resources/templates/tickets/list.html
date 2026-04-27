@@ -33,26 +33,31 @@
                                 </td>
                                 <td th:text="${#temporals.format(t.createdAt, 'yyyy-MM-dd HH:mm')}">Time</td>
                                 <td>
-                                    <div class="dropdown" sec:authorize="hasRole('IT_SUPPORT')">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                            Status
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
-                                                    <input type="hidden" name="status" value="IN_PROGRESS">
-                                                    <button type="submit" class="dropdown-item">In Progress</button>
-                                                </form>
-                                            </li>
-                                            <li>
-                                                <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
-                                                    <input type="hidden" name="status" value="RESOLVED">
-                                                    <button type="submit" class="dropdown-item">Resolved</button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="dropdown" sec:authorize="hasRole('IT_SUPPORT')">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                Status
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
+                                                        <input type="hidden" name="status" value="IN_PROGRESS">
+                                                        <button type="submit" class="dropdown-item">In Progress</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form th:action="@{/tickets/status/{id}(id=${t.ticketId})}" method="post">
+                                                        <input type="hidden" name="status" value="RESOLVED">
+                                                        <button type="submit" class="dropdown-item">Resolved</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <form th:action="@{/tickets/delete/{id}(id=${t.ticketId})}" method="post" sec:authorize="hasAnyRole('IT_SUPPORT', 'SYSTEM_ADMIN')" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                        <span sec:authorize="!hasAnyRole('IT_SUPPORT', 'SYSTEM_ADMIN')" class="text-muted small">View Only</span>
                                     </div>
-                                    <span sec:authorize="!hasRole('IT_SUPPORT')" class="text-muted small">View Only</span>
                                 </td>
                             </tr>
                         </tbody>

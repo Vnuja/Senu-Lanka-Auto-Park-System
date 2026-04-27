@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Edit Payroll</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Edit Payroll</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4 pb-3 border-bottom">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-1">Staff Member</h6>
+                        <p class="fs-5 fw-bold" th:text="${payroll.user.username}">John Doe</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-1">Period</h6>
+                        <p class="fs-5 fw-bold" th:text="${monthName} + ' ' + ${payroll.year}">January 2024</p>
+                    </div>
+                </div>
+
+                <form th:action="@{/payroll/update/{id}(id=${payroll.payrollId})}" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Basic Salary <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" class="form-control" name="basicSalary" th:value="${payroll.basicSalary}" required>
+                            </div>
+                            <small class="form-text text-muted">Enter the basic salary amount</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Allowances & Bonuses</label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" class="form-control" name="allowances" th:value="${payroll.allowances}">
+                            </div>
+                            <small class="form-text text-muted">Any additional allowances or bonuses</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Deductions (Tax, EPF, etc)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" class="form-control" name="deductions" th:value="${payroll.deductions}">
+                            </div>
+                            <small class="form-text text-muted">Tax, EPF, and other deductions</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Net Salary (Auto-calculated)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="text" class="form-control bg-light" id="netSalary" readonly th:value="${payroll.netSalary}">
+                            </div>
+                            <small class="form-text text-muted">Basic + Allowances - Deductions</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-calculator me-2"></i>
+                        <strong>Automatic Calculation:</strong> The net salary will be automatically calculated as you update the values.
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a th:href="@{/payroll/{id}(id=${payroll.payrollId})}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success px-4">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-calculate net salary
+        const basicSalaryInput = document.querySelector('input[name="basicSalary"]');
+        const allowancesInput = document.querySelector('input[name="allowances"]');
+        const deductionsInput = document.querySelector('input[name="deductions"]');
+        const netSalaryInput = document.getElementById('netSalary');
+
+        function calculateNetSalary() {
+            const basic = parseFloat(basicSalaryInput.value) || 0;
+            const allowances = parseFloat(allowancesInput.value) || 0;
+            const deductions = parseFloat(deductionsInput.value) || 0;
+            const net = (basic + allowances - deductions).toFixed(2);
+            netSalaryInput.value = net;
+        }
+
+        basicSalaryInput.addEventListener('input', calculateNetSalary);
+        allowancesInput.addEventListener('input', calculateNetSalary);
+        deductionsInput.addEventListener('input', calculateNetSalary);
+    </script>
+</body>
+</html>

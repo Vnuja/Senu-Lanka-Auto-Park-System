@@ -15,8 +15,10 @@ com\staffms\repository\DepartmentRepository.class
 com\staffms\repository\AttendanceRepository.class
 com\staffms\StaffManagementApplication.class
 com\staffms\model\entity\Performance.class
+com\staffms\service\SystemLogService.class
 com\staffms\controller\LeaveController.class
 com\staffms\model\entity\Department.class
+com\staffms\controller\HistoryController.class
 com\staffms\service\UserService.class
 com\staffms\service\CustomUserDetailsService.class
 com\staffms\model\entity\SystemLog.class

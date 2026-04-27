@@ -16,30 +16,30 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
-        
+            Authentication authentication) throws IOException, ServletException {
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String redirectUrl = "/dashboard";
+        String redirectUrl = "/profile";
 
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
             if (role.equals("ROLE_SYSTEM_ADMIN")) {
-                redirectUrl = "/admin/dashboard";
+                redirectUrl = "/admin/profile";
                 break;
             } else if (role.equals("ROLE_HR_MANAGER")) {
-                redirectUrl = "/hr/dashboard";
+                redirectUrl = "/hr/profile";
                 break;
             } else if (role.equals("ROLE_DEPT_MANAGER")) {
-                redirectUrl = "/manager/dashboard";
+                redirectUrl = "/manager/profile";
                 break;
             } else if (role.equals("ROLE_STAFF")) {
-                redirectUrl = "/staff/dashboard";
+                redirectUrl = "/staff/profile";
                 break;
             } else if (role.equals("ROLE_IT_SUPPORT")) {
-                redirectUrl = "/it/dashboard";
+                redirectUrl = "/it/profile";
                 break;
             } else if (role.equals("ROLE_ORG_MANAGEMENT")) {
-                redirectUrl = "/analytics/dashboard";
+                redirectUrl = "/analytics/profile";
                 break;
             }
         }

@@ -59,4 +59,19 @@ public class AttendanceService {
     public List<Attendance> getAttendanceByRange(LocalDate start, LocalDate end) {
         return attendanceRepository.findByDateBetween(start, end);
     }
+
+    @Transactional
+    public Attendance updateAttendance(Long id, LocalTime checkIn, LocalTime checkOut, AttendanceStatus status) {
+        Attendance attendance = attendanceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Attendance record not found"));
+        attendance.setCheckIn(checkIn);
+        attendance.setCheckOut(checkOut);
+        attendance.setStatus(status);
+        return attendanceRepository.save(attendance);
+    }
+
+    @Transactional
+    public void deleteAttendance(Long id) {
+        attendanceRepository.deleteById(id);
+    }
 }

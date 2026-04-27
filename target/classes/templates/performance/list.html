@@ -17,6 +17,7 @@
                                 <th>Evaluated By</th>
                                 <th>Comments</th>
                                 <th>Date</th>
+                                <th sec:authorize="hasRole('DEPT_MANAGER')">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -29,6 +30,46 @@
                                 <td th:text="${ev.evaluatedBy.username}">Manager</td>
                                 <td th:text="${ev.comments}">Great job.</td>
                                 <td th:text="${#temporals.format(ev.createdAt, 'yyyy-MM-dd')}">2023-01-01</td>
+                                <td sec:authorize="hasRole('DEPT_MANAGER')">
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" th:data-bs-target="'#editEvalModal' + ${ev.evalId}"><i class="fas fa-edit"></i></button>
+                                        <form th:action="@{/performance/delete/{id}(id=${ev.evalId})}" method="post" onsubmit="return confirm('Delete this evaluation?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" th:id="'editEvalModal' + ${ev.evalId}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form th:action="@{/performance/update/{id}(id=${ev.evalId})}" method="post">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Edit Evaluation</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Period</label>
+                                                            <input type="text" class="form-control" name="period" th:value="${ev.period}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Rating (1-5)</label>
+                                                            <input type="number" min="1" max="5" class="form-control" name="rating" th:value="${ev.rating}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Comments</label>
+                                                            <textarea class="form-control" name="comments" rows="3" required th:text="${ev.comments}"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

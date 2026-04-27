@@ -48,4 +48,11 @@ public class LeaveController {
         }
         return "redirect:/leave";
     }
+
+    @PostMapping("/delete/{id}")
+    public String deleteLeave(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
+        leaveService.deleteLeave(id, userDetails.getUser());
+        ra.addFlashAttribute("successMsg", "Leave request deleted successfully!");
+        return "redirect:/leave";
+    }
 }

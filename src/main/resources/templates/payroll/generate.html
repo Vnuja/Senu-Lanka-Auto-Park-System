@@ -6,45 +6,183 @@
 <body>
     <div layout:fragment="content">
         <div class="card shadow-sm">
-            <div class="card-header bg-white">Calculate & Generate Payroll</div>
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Generate Monthly Payroll</h5>
+            </div>
             <div class="card-body">
+                <div th:if="${warningMsg}" class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> <span th:text="${warningMsg}"></span>
+                    These staff members will not appear in the salary field or will show 0.00 LKR.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
                 <form th:action="@{/payroll/generate}" method="post">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Select Staff Member</label>
-                            <select name="staffId" class="form-select" required>
-                                <option th:each="s : ${staffList}" th:value="${s.profileId}" th:text="${s.fullName + ' (' + s.jobTitle + ')'}"></option>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label">Select Staff Member <span class="text-danger">*</span></label>
+                            <select name="staffId" class="form-select" id="staffSelect" onchange="updateBasicSalary()" required>
+                                <option value="">-- Choose Staff Member --</option>
+                                <option th:each="s : ${staffList}" 
+                                        th:value="${s.profileId}" 
+                                        th:attr="data-salary=${s.salaryBase != null ? s.salaryBase : 0}"
+                                        th:text="${s.fullName + ' (' + s.jobTitle + ')' + (s.salaryBase != null && s.salaryBase > 0 ? '' : ' [No Salary Set]')}"></option>
+                            </select>
+                            <small class="form-text text-muted">Select the staff member to generate payroll for</small>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Month <span class="text-danger">*</span></label>
+                            <select name="month" class="form-select" required>
+                                <option value="">-- Select Month --</option>
+                                <option value="1" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 1}">January</option>
+                                <option value="2" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 2}">February</option>
+                                <option value="3" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 3}">March</option>
+                                <option value="4" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 4}">April</option>
+                                <option value="5" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 5}">May</option>
+                                <option value="6" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 6}">June</option>
+                                <option value="7" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 7}">July</option>
+                                <option value="8" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 8}">August</option>
+                                <option value="9" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 9}">September</option>
+                                <option value="10" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 10}">October</option>
+                                <option value="11" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 11}">November</option>
+                                <option value="12" th:selected="${T(java.time.LocalDate).now().getMonthValue() == 12}">December</option>
                             </select>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Month</label>
-                            <input type="number" name="month" class="form-control" min="1" max="12" th:value="${T(java.time.LocalDate).now().getMonthValue()}" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Year</label>
+                        <div class="col-md-4">
+                            <label class="form-label">Year <span class="text-danger">*</span></label>
                             <input type="number" name="year" class="form-control" th:value="${T(java.time.LocalDate).now().getYear()}" required>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Bonus / Allowances</label>
-                            <input type="number" step="0.01" name="allowances" class="form-control" value="0.00">
+                        <div class="col-md-4">
+                            <label class="form-label">Basic Salary</label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" class="form-control bg-light" id="basicSalary" readonly>
+                            </div>
+                            <small class="form-text text-muted">Auto-populated from staff records</small>
                         </div>
-                        <div class="col-md-6 mb-3">
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6 class="mb-3">Salary Components</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Allowances & Bonuses</label>
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" name="allowances" id="allowances" class="form-control" value="0.00" onchange="calculateNetSalary()">
+                            </div>
+                            <small class="form-text text-muted">Any additional allowances or bonuses</small>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label">Deductions (Tax, EPF, etc)</label>
-                            <input type="number" step="0.01" name="deductions" class="form-control" value="0.00">
+                            <div class="input-group">
+                                <span class="input-group-text">LKR</span>
+                                <input type="number" step="0.01" name="deductions" id="deductions" class="form-control" value="0.00" onchange="calculateNetSalary()">
+                            </div>
+                            <small class="form-text text-muted">Tax, EPF, and other deductions</small>
                         </div>
                     </div>
-                    <div class="alert alert-info py-2">
-                        <i class="fas fa-info-circle me-1"></i> Net Salary will be auto-calculated as (Basic + Allowances - Deductions).
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="card bg-light border-0">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">Basic Salary:</span>
+                                        <span id="displayBasic">LKR 0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted">+ Allowances:</span>
+                                        <span class="text-success" id="displayAllowances">LKR 0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3 pb-2 border-bottom">
+                                        <span class="text-muted">- Deductions:</span>
+                                        <span class="text-danger" id="displayDeductions">LKR 0.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-bold">= Net Salary:</span>
+                                        <span class="fw-bold fs-5" id="displayNet">LKR 0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Formula:</strong> Net Salary = Basic Salary + Allowances - Deductions
+                    </div>
+
                     <div class="d-flex justify-content-end gap-2">
-                        <a th:href="@{/payroll}" class="btn btn-outline-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-success px-4">Generate & Save</button>
+                        <a th:href="@{/payroll}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fas fa-save"></i> Generate & Save
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        function formatCurrency(value) {
+            return 'LKR ' + parseFloat(value || 0).toFixed(2);
+        }
+
+        function updateBasicSalary() {
+            const select = document.getElementById('staffSelect');
+            const basicSalaryInput = document.getElementById('basicSalary');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value) {
+                const salary = selectedOption.getAttribute('data-salary') || '0';
+                const salaryValue = parseFloat(salary) || 0;
+                basicSalaryInput.value = salaryValue.toFixed(2);
+                
+                if (salaryValue === 0) {
+                    basicSalaryInput.style.backgroundColor = '#fff3cd';
+                    console.warn('Warning: Selected staff member has no basic salary set.');
+                } else {
+                    basicSalaryInput.style.backgroundColor = '';
+                }
+            } else {
+                basicSalaryInput.value = '';
+                basicSalaryInput.style.backgroundColor = '';
+            }
+            
+            calculateNetSalary();
+        }
+
+        function calculateNetSalary() {
+            const basicSalary = parseFloat(document.getElementById('basicSalary').value) || 0;
+            const allowances = parseFloat(document.getElementById('allowances').value) || 0;
+            const deductions = parseFloat(document.getElementById('deductions').value) || 0;
+            const net = basicSalary + allowances - deductions;
+
+            // Update display values
+            document.getElementById('displayBasic').textContent = formatCurrency(basicSalary);
+            document.getElementById('displayAllowances').textContent = formatCurrency(allowances);
+            document.getElementById('displayDeductions').textContent = formatCurrency(deductions);
+            document.getElementById('displayNet').textContent = formatCurrency(net);
+        }
+
+        // Initialize on document ready
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateNetSalary();
+            
+            // Listen for changes in allowances and deductions
+            const allowancesInput = document.getElementById('allowances');
+            const deductionsInput = document.getElementById('deductions');
+            
+            if (allowancesInput) allowancesInput.addEventListener('input', calculateNetSalary);
+            if (deductionsInput) deductionsInput.addEventListener('input', calculateNetSalary);
+        });
+    </script>
 </body>
 </html>
