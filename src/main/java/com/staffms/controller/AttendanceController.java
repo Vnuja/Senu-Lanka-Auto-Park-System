@@ -31,7 +31,7 @@ public class AttendanceController {
     public String checkIn(@AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
         attendanceService.checkIn(userDetails.getUser());
         ra.addFlashAttribute("successMsg", "Checked in successfully!");
-        return "redirect:/staff/dashboard";
+        return "redirect:/staff/profile";
     }
 
     @PostMapping("/check-out")
@@ -42,6 +42,6 @@ public class AttendanceController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", e.getMessage());
         }
-        return "redirect:/staff/dashboard";
+        return "redirect:/staff/profile";
     }
 }

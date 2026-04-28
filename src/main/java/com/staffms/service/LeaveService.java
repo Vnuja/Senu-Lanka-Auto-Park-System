@@ -17,6 +17,9 @@ public class LeaveService {
     @Autowired
     private LeaveRequestRepository leaveRequestRepository;
 
+    @Autowired
+    private SystemLogService logService;
+
     public List<LeaveRequest> getLeavesByUser(User user) {
         return leaveRequestRepository.findByUserOrderByStartDateDesc(user);
     }
@@ -28,7 +31,9 @@ public class LeaveService {
     @Transactional
     public LeaveRequest submitLeave(LeaveRequest request) {
         request.setStatus(RequestStatus.PENDING);
-        return leaveRequestRepository.save(request);
+        LeaveRequest saved = leaveRequestRepository.save(request);
+        logService.log(request.getUser(), "SUBMIT_LEAVE", "LeaveRequest", saved.getLeaveId());
+        return saved;
     }
 
     public LeaveRequest getLeaveById(Long id) {
@@ -41,6 +46,8 @@ public class LeaveService {
         request.setStatus(status);
         request.setReviewedBy(reviewer);
         request.setReviewedAt(LocalDateTime.now());
-        return leaveRequestRepository.save(request);
+        LeaveRequest saved = leaveRequestRepository.save(request);
+        logService.log(reviewer, status.name() + "_LEAVE", "LeaveRequest", saved.getLeaveId());
+        return saved;
     }
 }
