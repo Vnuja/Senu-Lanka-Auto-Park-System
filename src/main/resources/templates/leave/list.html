@@ -20,7 +20,6 @@
                                 <th>End Date</th>
                                 <th>Status</th>
                                 <th>Reason</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,11 +31,6 @@
                                     <span class="badge" th:classappend="${leave.status.name() == 'APPROVED' ? 'bg-success' : (leave.status.name() == 'PENDING' ? 'bg-warning' : 'bg-danger')}" th:text="${leave.status}">Pending</span>
                                 </td>
                                 <td th:text="${leave.reason}">Vacation</td>
-                                <td>
-                                    <form th:action="@{/leave/delete/{id}(id=${leave.leaveId})}" method="post" onsubmit="return confirm('Are you sure you want to delete this leave request?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i> Cancel</button>
-                                    </form>
-                                </td>
                             </tr>
                         </tbody>
                     </table>

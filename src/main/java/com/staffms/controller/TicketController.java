@@ -61,11 +61,4 @@ public class TicketController {
         ra.addFlashAttribute("successMsg", "Ticket status updated to " + status);
         return "redirect:/tickets";
     }
-
-    @PostMapping("/delete/{id}")
-    public String deleteTicket(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
-        ticketService.deleteTicket(id, userDetails.getUser());
-        ra.addFlashAttribute("successMsg", "Ticket deleted successfully!");
-        return "redirect:/tickets";
-    }
 }

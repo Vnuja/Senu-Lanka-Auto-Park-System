@@ -31,7 +31,7 @@ public class AttendanceController {
     public String checkIn(@AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
         attendanceService.checkIn(userDetails.getUser());
         ra.addFlashAttribute("successMsg", "Checked in successfully!");
-        return "redirect:/staff/profile";
+        return "redirect:/staff/dashboard";
     }
 
     @PostMapping("/check-out")
@@ -42,24 +42,6 @@ public class AttendanceController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", e.getMessage());
         }
-        return "redirect:/staff/profile";
-    }
-
-    @PostMapping("/update/{id}")
-    public String updateAttendance(@org.springframework.web.bind.annotation.PathVariable Long id,
-                                   @org.springframework.web.bind.annotation.RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.TIME) java.time.LocalTime checkIn,
-                                   @org.springframework.web.bind.annotation.RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.TIME) java.time.LocalTime checkOut,
-                                   @org.springframework.web.bind.annotation.RequestParam com.staffms.util.AttendanceStatus status,
-                                   RedirectAttributes ra) {
-        attendanceService.updateAttendance(id, checkIn, checkOut, status);
-        ra.addFlashAttribute("successMsg", "Attendance record updated successfully!");
-        return "redirect:/attendance";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteAttendance(@org.springframework.web.bind.annotation.PathVariable Long id, RedirectAttributes ra) {
-        attendanceService.deleteAttendance(id);
-        ra.addFlashAttribute("successMsg", "Attendance record deleted successfully!");
-        return "redirect:/attendance";
+        return "redirect:/staff/dashboard";
     }
 }

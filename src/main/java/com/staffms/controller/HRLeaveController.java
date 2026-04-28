@@ -27,18 +27,16 @@ public class HRLeaveController {
     }
 
     @PostMapping("/approve/{id}")
-    public String approveLeave(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,
-            RedirectAttributes ra) {
+    public String approveLeave(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
         leaveService.reviewLeave(id, RequestStatus.APPROVED, userDetails.getUser());
         ra.addFlashAttribute("successMsg", "Leave request approved.");
-        return "redirect:/hr/profile";
+        return "redirect:/hr/dashboard";
     }
 
     @PostMapping("/reject/{id}")
-    public String rejectLeave(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails,
-            RedirectAttributes ra) {
+    public String rejectLeave(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, RedirectAttributes ra) {
         leaveService.reviewLeave(id, RequestStatus.REJECTED, userDetails.getUser());
         ra.addFlashAttribute("successMsg", "Leave request rejected.");
-        return "redirect:/hr/profile";
+        return "redirect:/hr/dashboard";
     }
 }

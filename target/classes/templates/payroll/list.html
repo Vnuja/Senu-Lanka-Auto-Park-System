@@ -5,174 +5,40 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <!-- Error/Success Messages -->
-        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            <strong>Error:</strong> <span th:text="${errorMsg}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            <span th:text="${successMsg}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <div th:if="${warningMsg}" class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <span th:text="${warningMsg}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-
-        <!-- Filter Card -->
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-white">
-                <h6 class="mb-0">Filter & Search</h6>
-            </div>
-            <div class="card-body">
-                <form method="get" th:action="@{/payroll}" class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Month</label>
-                        <select name="month" class="form-select">
-                            <option value="">-- Select Month --</option>
-                            <option value="1" th:selected="${month == 1}">January</option>
-                            <option value="2" th:selected="${month == 2}">February</option>
-                            <option value="3" th:selected="${month == 3}">March</option>
-                            <option value="4" th:selected="${month == 4}">April</option>
-                            <option value="5" th:selected="${month == 5}">May</option>
-                            <option value="6" th:selected="${month == 6}">June</option>
-                            <option value="7" th:selected="${month == 7}">July</option>
-                            <option value="8" th:selected="${month == 8}">August</option>
-                            <option value="9" th:selected="${month == 9}">September</option>
-                            <option value="10" th:selected="${month == 10}">October</option>
-                            <option value="11" th:selected="${month == 11}">November</option>
-                            <option value="12" th:selected="${month == 12}">December</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Year</label>
-                        <input type="number" name="year" class="form-control" th:value="${year}">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i> Filter
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Payroll Summary Card -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="card shadow-sm bg-light">
-                    <div class="card-body">
-                        <h6 class="text-muted mb-1">Total Records</h6>
-                        <h3 class="mb-0" th:text="${recordCount}">0</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card shadow-sm bg-light">
-                    <div class="card-body">
-                        <h6 class="text-muted mb-1">Total Payroll Amount</h6>
-                        <h3 class="mb-0 text-success" th:text="'LKR ' + ${#numbers.formatDecimal(totalAmount, 1, 2)}">LKR 0.00</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payroll List Card -->
         <div class="card shadow-sm">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <span th:text="'Payroll for ' + ${month} + '/' + ${year}">Payroll</span>
-                <a th:href="@{/payroll/generate}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Generate Payroll
-                </a>
+                <a th:href="@{/payroll/generate}" class="btn btn-sm btn-primary">Generate Payroll</a>
             </div>
-            <div class="card-body p-0">
-                <div th:if="${payrolls.isEmpty()}" class="alert alert-info m-3 mb-0">
-                    <i class="fas fa-info-circle me-2"></i>
-                    No payroll records found for the selected month and year.
-                </div>
-                <div th:if="${!payrolls.isEmpty()}" class="table-responsive">
-                    <table class="table table-hover mb-0 datatable">
-                        <thead class="table-light">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
                             <tr>
                                 <th>Staff Member</th>
-                                <th class="text-end">Basic Salary</th>
-                                <th class="text-end">Allowances</th>
-                                <th class="text-end">Deductions</th>
-                                <th class="text-end">Net Salary</th>
-                                <th class="text-center">Actions</th>
+                                <th>Basic Salary</th>
+                                <th>Allowances</th>
+                                <th>Deductions</th>
+                                <th>Net Salary</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="p : ${payrolls}">
+                                <td th:text="${p.user.username}">Bob</td>
+                                <td th:text="${p.basicSalary}">5000</td>
+                                <td th:text="${p.allowances}">500</td>
+                                <td th:text="${p.deductions}">200</td>
+                                <td class="fw-bold" th:text="${p.netSalary}">5300</td>
                                 <td>
-                                    <a th:href="@{/payroll/staff/{id}(id=${p.user.id})}" th:text="${p.user.username}" class="text-decoration-none"></a>
-                                </td>
-                                <td class="text-end" th:text="'LKR ' + ${#numbers.formatDecimal(p.basicSalary, 1, 2)}">LKR 0.00</td>
-                                <td class="text-end text-success" th:text="'LKR ' + ${#numbers.formatDecimal(p.allowances, 1, 2)}">LKR 0.00</td>
-                                <td class="text-end text-danger" th:text="'LKR ' + ${#numbers.formatDecimal(p.deductions, 1, 2)}">LKR 0.00</td>
-                                <td class="text-end fw-bold" th:text="'LKR ' + ${#numbers.formatDecimal(p.netSalary, 1, 2)}">LKR 0.00</td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a th:href="@{/payroll/{id}(id=${p.payrollId})}" class="btn btn-outline-info" title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a th:href="@{/payroll/{id}/edit(id=${p.payrollId})}" class="btn btn-outline-primary" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button class="btn btn-outline-secondary" title="Print" onclick="printPayroll(this)">
-                                            <i class="fas fa-print"></i>
-                                        </button>
-                                        <form th:action="@{/payroll/delete/{id}(id=${p.payrollId})}" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this payroll entry?');">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-print"></i></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-                <small class="text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Showing <span th:text="${recordCount}">0</span> payroll record(s)
-                </small>
-                <a th:href="@{/payroll/generate}" class="btn btn-sm btn-success">
-                    <i class="fas fa-plus"></i> Add Payroll
-                </a>
-            </div>
         </div>
     </div>
-
-    <script>
-        function printPayroll(button) {
-            alert('Print functionality will be implemented with a dedicated payroll slip template.');
-            // TODO: Implement print functionality
-        }
-
-        // DataTable initialization
-        if (typeof $ !== 'undefined' && $.fn.dataTable) {
-            $(document).ready(function() {
-                $('.datatable').DataTable({
-                    "pageLength": 25,
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "columnDefs": [
-                        {
-                            "targets": -1,
-                            "orderable": false
-                        }
-                    ]
-                });
-            });
-        }
-    </script>
 </body>
 </html>
